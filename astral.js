@@ -1,12 +1,12 @@
 import { Telegraf } from 'telegraf';
 import dotenv from 'dotenv';
 import { handleCommand } from './handlers/commandHandler.js';
+import http from 'http';
 
 dotenv.config();
 
 const token = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new Telegraf(token);
-
 
 // Welcoming message when the bot is started
 bot.start((ctx) => {
@@ -37,3 +37,12 @@ bot.on('left_chat_member', (ctx) => {
 // Log that the bot is running
 bot.launch();
 console.log('Astral Bot is running...');
+
+// Simple HTTP server to keep the bot running and let the platform detect an open port
+const PORT = process.env.PORT || 3000;
+http.createServer((req, res) => {
+  res.writeHead(200, { 'Content-Type': 'text/plain' });
+  res.end('Astral Bot is running!\n');
+}).listen(PORT, () => {
+  console.log(`Server is listening on port ${PORT}`);
+});
