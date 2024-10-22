@@ -1,15 +1,14 @@
 import axios from 'axios';
 
-// Function to fetch lyrics using Vagalume API
+// Function to fetch lyrics using ChartLyrics API
 const fetchLyrics = async (songName, artistName) => {
-  const apiUrl = `https://api.vagalume.com.br/search.php?art=${encodeURIComponent(artistName)}&mus=${encodeURIComponent(songName)}`;
+  const apiUrl = `http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=${encodeURIComponent(artistName)}&song=${encodeURIComponent(songName)}`;
 
   try {
     const response = await axios.get(apiUrl);
-    if (response.data.response && response.data.response.docs.length > 0) {
-      return response.data.response.docs[0].text; // Lyrics text
-    }
-    return null; // No lyrics found
+    const lyrics = response.data; // Parse the response to get lyrics
+    // Extract the relevant lyrics text from the response here
+    return lyrics; // Return lyrics
   } catch (error) {
     console.error('Error fetching lyrics:', error);
     return null;
@@ -42,4 +41,3 @@ const lyricsCommand = async (ctx, args) => {
 };
 
 export default lyricsCommand;
-  
