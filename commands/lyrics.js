@@ -1,14 +1,27 @@
 import axios from 'axios';
+import cheerio from 'cheerio';
 
-// Function to fetch lyrics using ChartLyrics API
+// Function to scrape lyrics from a lyrics website
 const fetchLyrics = async (songName, artistName) => {
-  const apiUrl = `http://api.chartlyrics.com/apiv1.asmx/SearchLyric?artist=${encodeURIComponent(artistName)}&song=${encodeURIComponent(songName)}`;
+  const query = `${songName} ${artistName}`;
+  const searchUrl = `https://www.lyrics.com/serp.php?st=${encodeURIComponent(query)}`;
 
   try {
-    const response = await axios.get(apiUrl);
-    const lyrics = response.data; // Parse the response to get lyrics
-    // Extract the relevant lyrics text from the response here
-    return lyrics; // Return lyrics
+    // Fetch the search results page
+    const response = await axios.get(searchUrl);
+    const $ = cheerio.load(response.data);
+
+    // Find the first result link
+    const firstResult = $('a.lyric-link').first();
+    const lyricsPageUrl = firstResult.attr('href');
+
+    // Fetch the lyrics page
+    const lyricsResponse = await axios.get(`https://www.lyrics.com${lyricsPageUrl}`);
+    const lyricsPage = cheerio.load(lyricsResponse.data);
+
+    // Extract the lyrics
+    const lyrics = lyricsPage('.lyric-body').text().trim();
+    return lyrics;
   } catch (error) {
     console.error('Error fetching lyrics:', error);
     return null;
@@ -41,3 +54,4 @@ const lyricsCommand = async (ctx, args) => {
 };
 
 export default lyricsCommand;
+  
