@@ -1,19 +1,15 @@
 import axios from 'axios';
 
-// Function to fetch lyrics using AudD API
-const fetchLyrics = async (songName) => {
-  const apiKey = process.env.AUDD_API_KEY; // Set your AudD API key in .env
-  const apiUrl = `https://api.audd.io/findLyrics/?q=${encodeURIComponent(songName)}&api_token=${apiKey}`;
+// Function to fetch lyrics using Vagalume API
+const fetchLyrics = async (songName, artistName) => {
+  const apiUrl = `https://api.vagalume.com.br/search.php?art=${encodeURIComponent(artistName)}&mus=${encodeURIComponent(songName)}`;
 
   try {
     const response = await axios.get(apiUrl);
-
-    // Check if there are results
-    if (response.data && response.data.result && response.data.result.length > 0) {
-      return response.data.result[0].lyrics;
-    } else {
-      return null;
+    if (response.data.response && response.data.response.docs.length > 0) {
+      return response.data.response.docs[0].text; // Lyrics text
     }
+    return null; // No lyrics found
   } catch (error) {
     console.error('Error fetching lyrics:', error);
     return null;
@@ -22,18 +18,26 @@ const fetchLyrics = async (songName) => {
 
 // Command to get lyrics
 const lyricsCommand = async (ctx, args) => {
-  if (args.length === 0) {
-    ctx.reply('Please provide a song name. Usage: /lyrics [song name]');
+  if (args.length < 2) {
+    ctx.reply('Please provide both a song name and artist. Usage: /lyrics [song name] by [artist]');
     return;
   }
 
-  const songName = args.join(' ');
-  const lyrics = await fetchLyrics(songName);
+  const artistKeywordIndex = args.indexOf('by');
+  if (artistKeywordIndex === -1) {
+    ctx.reply('Please use "by" to separate the song name and the artist.');
+    return;
+  }
+
+  const songName = args.slice(0, artistKeywordIndex).join(' ');
+  const artistName = args.slice(artistKeywordIndex + 1).join(' ');
+
+  const lyrics = await fetchLyrics(songName, artistName);
 
   if (lyrics) {
-    ctx.reply(`🎶 Lyrics for *${songName}*:\n\n${lyrics}`);
+    ctx.reply(`🎶 Lyrics for *${songName}* by *${artistName}*:\n\n${lyrics}`);
   } else {
-    ctx.reply(`Sorry, I couldn't find the lyrics for *${songName}*.`);
+    ctx.reply(`Sorry, I couldn't find the lyrics for *${songName}* by *${artistName}*.`);
   }
 };
 
