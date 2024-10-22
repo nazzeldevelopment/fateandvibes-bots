@@ -1,28 +1,19 @@
 import axios from 'axios';
 
-// Function to fetch lyrics using Genius API
+// Function to fetch lyrics using AudD API
 const fetchLyrics = async (songName) => {
-  const accessToken = process.env.GENIUS_ACCESS_TOKEN; // Set your Genius access token in .env
-  const searchUrl = `https://api.genius.com/search?q=${encodeURIComponent(songName)}`;
+  const apiKey = process.env.AUDD_API_KEY; // Set your AudD API key in .env
+  const apiUrl = `https://api.audd.io/findLyrics/?q=${encodeURIComponent(songName)}&api_token=${apiKey}`;
 
   try {
-    // Search for the song on Genius
-    const response = await axios.get(searchUrl, {
-      headers: {
-        Authorization: `Bearer ${accessToken}`,
-      },
-    });
+    const response = await axios.get(apiUrl);
 
-    const hits = response.data.response.hits;
-    if (hits.length === 0) {
+    // Check if there are results
+    if (response.data && response.data.result && response.data.result.length > 0) {
+      return response.data.result[0].lyrics;
+    } else {
       return null;
     }
-
-    // Get the URL of the first result
-    const songUrl = hits[0].result.url;
-
-    // Fetch the lyrics from the song page
-    return `You can find the lyrics here: ${songUrl}`;
   } catch (error) {
     console.error('Error fetching lyrics:', error);
     return null;
@@ -37,13 +28,14 @@ const lyricsCommand = async (ctx, args) => {
   }
 
   const songName = args.join(' ');
-  const lyricsMessage = await fetchLyrics(songName);
+  const lyrics = await fetchLyrics(songName);
 
-  if (lyricsMessage) {
-    ctx.reply(lyricsMessage);
+  if (lyrics) {
+    ctx.reply(`🎶 Lyrics for *${songName}*:\n\n${lyrics}`);
   } else {
     ctx.reply(`Sorry, I couldn't find the lyrics for *${songName}*.`);
   }
 };
 
 export default lyricsCommand;
+  
