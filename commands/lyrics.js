@@ -9,9 +9,10 @@ const fetchLyrics = async (songName, artistName) => {
     const response = await axios.get(apiUrl);
 
     // Check if lyrics are found
-    if (response.data.message.body.lyrics) {
+    if (response.data.message.body && response.data.message.body.lyrics) {
       return response.data.message.body.lyrics.lyrics_body;
     } else {
+      console.log(`No lyrics found for "${songName}" by "${artistName}".`);
       return null;
     }
   } catch (error) {
@@ -46,4 +47,4 @@ const lyricsCommand = async (ctx, args) => {
 };
 
 export default lyricsCommand;
-    
+              
