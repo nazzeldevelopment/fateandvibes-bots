@@ -19,4 +19,5 @@ export const STOCKS_API_KEY = process.env.STOCKS_API_KEY;
 export const GLOBAL_STOCKS_API_KEY = process.env.GLOBAL_STOCKS_API_KEY;
 export const TADDY_API_KEY = process.env.TADDY_API_KEY;
 export const RAPIDAPI_KEY =  process.env.RAPIDAPI_KEY;
+expprt const MUSIXMATCH_API_KEY = process.env.MUSIXMATCH_API_KEY;
 //export const AUDD_API_KEY = process.env.AUDD_API_KEY;
