@@ -8,7 +8,7 @@ const fetchFromAudD = async (songName, artistName) => {
   try {
     const response = await axios.get(apiUrl);
     if (response.data && response.data.result && response.data.result.length > 0) {
-      return response.data.result[0].lyrics;
+      return response.data.result[0].lyrics; // Return lyrics from AudD
     } else {
       return null;
     }
@@ -18,19 +18,29 @@ const fetchFromAudD = async (songName, artistName) => {
   }
 };
 
-// Function to fetch lyrics using Lyrics.ovh API as fallback
-const fetchFromLyricsOvh = async (songName, artistName) => {
-  const apiUrl = `https://api.lyrics.ovh/v1/${encodeURIComponent(artistName)}/${encodeURIComponent(songName)}`;
+// Function to fetch lyrics using Genius API
+const fetchFromGenius = async (songName, artistName) => {
+  const apiKey = process.env.GENIUS_API_KEY; // Set your Genius API key in .env
+  const apiUrl = `https://api.genius.com/search?q=${encodeURIComponent(songName)} by ${encodeURIComponent(artistName)}`;
+  const headers = {
+    Authorization: `Bearer ${apiKey}`,
+  };
 
   try {
-    const response = await axios.get(apiUrl);
-    if (response.data && response.data.lyrics) {
-      return response.data.lyrics;
+    const response = await axios.get(apiUrl, { headers });
+    if (response.data.response.hits.length > 0) {
+      const songId = response.data.response.hits[0].result.id;
+      const songUrl = `https://api.genius.com/songs/${songId}`;
+      const songResponse = await axios.get(songUrl, { headers });
+      
+      // Get the lyrics from the response
+      const lyrics = songResponse.data.response.song.lyrics;
+      return lyrics ? lyrics.replace(/<[^>]*>/g, '').trim() : null; // Clean up HTML tags
     } else {
       return null;
     }
   } catch (error) {
-    console.error('Error fetching lyrics from Lyrics.ovh:', error);
+    console.error('Error fetching lyrics from Genius:', error);
     return null;
   }
 };
@@ -40,8 +50,8 @@ const fetchLyrics = async (songName, artistName) => {
   // Try fetching from AudD first
   let lyrics = await fetchFromAudD(songName, artistName);
   if (!lyrics) {
-    // Fallback to Lyrics.ovh if AudD doesn't have the lyrics
-    lyrics = await fetchFromLyricsOvh(songName, artistName);
+    // Fallback to Genius if AudD doesn't have the lyrics
+    lyrics = await fetchFromGenius(songName, artistName);
   }
 
   return lyrics;
