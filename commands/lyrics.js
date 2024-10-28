@@ -8,7 +8,6 @@ const fetchFromAudD = async (songName, artistName) => {
   try {
     const response = await axios.get(apiUrl);
     if (response.data && response.data.result && response.data.result.length > 0) {
-      // Returning the lyrics from the first result
       return response.data.result[0].lyrics;
     } else {
       return null;
