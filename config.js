@@ -21,4 +21,3 @@ export const TADDY_API_KEY = process.env.TADDY_API_KEY;
 export const RAPIDAPI_KEY =  process.env.RAPIDAPI_KEY;
 export const MUSIXMATCH_API_KEY = process.env.MUSIXMATCH_API_KEY;
 export const AUDD_API_KEY = process.env.AUDD_API_KEY;
-export const GENIUS_API_KEY = process.env.GENIUS_API_KEY;
