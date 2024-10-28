@@ -27,17 +27,28 @@ const fetchFromMusixmatch = async (songName, artistName) => {
     const searchUrl = `https://api.musixmatch.com/ws/1.1/track.search?q_track=${encodeURIComponent(songName)}&q_artist=${encodeURIComponent(artistName)}&apikey=${apiKey}`;
     const searchResponse = await axios.get(searchUrl);
 
-    const trackList = searchResponse.data.message.body.track_list;
-    if (trackList.length > 0) {
+    if (
+      searchResponse.data &&
+      searchResponse.data.message &&
+      searchResponse.data.message.body &&
+      searchResponse.data.message.body.track_list &&
+      searchResponse.data.message.body.track_list.length > 0
+    ) {
+      const trackList = searchResponse.data.message.body.track_list;
       const trackId = trackList[0].track.track_id;
 
       // Step 2: Fetch full lyrics using the Track ID
       const lyricsUrl = `https://api.musixmatch.com/ws/1.1/track.lyrics.get?track_id=${trackId}&apikey=${apiKey}`;
       const lyricsResponse = await axios.get(lyricsUrl);
 
-      const lyrics = lyricsResponse.data.message.body.lyrics;
-      if (lyrics && lyrics.lyrics_body) {
-        return lyrics.lyrics_body;
+      if (
+        lyricsResponse.data &&
+        lyricsResponse.data.message &&
+        lyricsResponse.data.message.body &&
+        lyricsResponse.data.message.body.lyrics &&
+        lyricsResponse.data.message.body.lyrics.lyrics_body
+      ) {
+        return lyricsResponse.data.message.body.lyrics.lyrics_body;
       } else {
         return null;
       }
