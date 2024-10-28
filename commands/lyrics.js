@@ -3,12 +3,13 @@ import axios from 'axios';
 // Function to fetch lyrics using AudD API
 const fetchFromAudD = async (songName, artistName) => {
   const apiKey = process.env.AUDD_API_KEY; // Set your AudD API key in .env
-  const apiUrl = `https://api.audd.io/lyrics/?q=${encodeURIComponent(songName)}&artist=${encodeURIComponent(artistName)}&api_token=${apiKey}`;
+  const apiUrl = `https://api.audd.io/findLyrics/?q=${encodeURIComponent(songName)} ${encodeURIComponent(artistName)}&api_token=${apiKey}`;
 
   try {
     const response = await axios.get(apiUrl);
     if (response.data && response.data.result && response.data.result.length > 0) {
-      return response.data.result[0].lyrics; // Return lyrics from AudD
+      // Returning the lyrics from the first result
+      return response.data.result[0].lyrics;
     } else {
       return null;
     }
@@ -18,29 +19,34 @@ const fetchFromAudD = async (songName, artistName) => {
   }
 };
 
-// Function to fetch lyrics using Genius API
-const fetchFromGenius = async (songName, artistName) => {
-  const apiKey = process.env.GENIUS_API_KEY; // Set your Genius API key in .env
-  const apiUrl = `https://api.genius.com/search?q=${encodeURIComponent(songName)} by ${encodeURIComponent(artistName)}`;
-  const headers = {
-    Authorization: `Bearer ${apiKey}`,
-  };
+// Function to search and get full lyrics using Musixmatch API
+const fetchFromMusixmatch = async (songName, artistName) => {
+  const apiKey = process.env.MUSIXMATCH_API_KEY; // Set your Musixmatch API key in .env
 
   try {
-    const response = await axios.get(apiUrl, { headers });
-    if (response.data.response.hits.length > 0) {
-      const songId = response.data.response.hits[0].result.id;
-      const songUrl = `https://api.genius.com/songs/${songId}`;
-      const songResponse = await axios.get(songUrl, { headers });
-      
-      // Get the lyrics from the response
-      const lyrics = songResponse.data.response.song.lyrics;
-      return lyrics ? lyrics.replace(/<[^>]*>/g, '').trim() : null; // Clean up HTML tags
+    // Step 1: Search for the track ID
+    const searchUrl = `https://api.musixmatch.com/ws/1.1/track.search?q_track=${encodeURIComponent(songName)}&q_artist=${encodeURIComponent(artistName)}&apikey=${apiKey}`;
+    const searchResponse = await axios.get(searchUrl);
+
+    const trackList = searchResponse.data.message.body.track_list;
+    if (trackList.length > 0) {
+      const trackId = trackList[0].track.track_id;
+
+      // Step 2: Fetch full lyrics using the Track ID
+      const lyricsUrl = `https://api.musixmatch.com/ws/1.1/track.lyrics.get?track_id=${trackId}&apikey=${apiKey}`;
+      const lyricsResponse = await axios.get(lyricsUrl);
+
+      const lyrics = lyricsResponse.data.message.body.lyrics;
+      if (lyrics && lyrics.lyrics_body) {
+        return lyrics.lyrics_body;
+      } else {
+        return null;
+      }
     } else {
       return null;
     }
   } catch (error) {
-    console.error('Error fetching lyrics from Genius:', error);
+    console.error('Error fetching lyrics from Musixmatch:', error);
     return null;
   }
 };
@@ -50,8 +56,8 @@ const fetchLyrics = async (songName, artistName) => {
   // Try fetching from AudD first
   let lyrics = await fetchFromAudD(songName, artistName);
   if (!lyrics) {
-    // Fallback to Genius if AudD doesn't have the lyrics
-    lyrics = await fetchFromGenius(songName, artistName);
+    // Fallback to Musixmatch if AudD doesn't have the lyrics
+    lyrics = await fetchFromMusixmatch(songName, artistName);
   }
 
   return lyrics;
