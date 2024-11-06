@@ -59,4 +59,4 @@ const weatherCommand = async (ctx, args) => {
   }
 };
 
-export { weatherCommand };
+export default { weatherCommand };
