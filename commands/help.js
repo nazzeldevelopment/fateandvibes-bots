@@ -1,5 +1,5 @@
 export const helpCommand = async (ctx) => {
-  const helpMessage = `🌟 *Welcome to Astral Hunters Bot!* 🌟
+  const helpMessage = `🌟 *Welcome to Unified Ascensants Bot!* 🌟
 
 ✨ Here are some amazing features you can use:
 
