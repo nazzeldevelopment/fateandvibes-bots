@@ -10,7 +10,7 @@ const bot = new Telegraf(token);
 
 // Welcoming message when the bot is started
 bot.start((ctx) => {
-  ctx.reply('Welcome to the Astral Hunters bot! Use /help to see the available commands.');
+  ctx.reply('Welcome to the Unified Ascendants bot! Use /help to see the available commands.');
 });
 
 // Handle incoming messages
@@ -25,7 +25,7 @@ bot.on('text', (ctx) => {
 // Welcoming new chat members
 bot.on('new_chat_members', (ctx) => {
   ctx.message.new_chat_members.forEach((member) => {
-    ctx.reply(`Welcome ${member.first_name}! Use /level to check your level.`);
+    ctx.reply(`Welcome ${member.first_name}! Enjoy in Unified Ascendants.`);
   });
 });
 
