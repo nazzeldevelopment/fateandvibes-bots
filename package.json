@@ -1,10 +1,10 @@
 {
-  "name": "your-project-name",
+  "name": "unified-ascendants-bots",
   "version": "1.0.0",
   "type": "module",
-  "main": "astral.js",
+  "main": "unified.js",
   "scripts": {
-    "start": "node astral.js"
+    "start": "node unified.js"
   },
   "dependencies": {
     "axios": "^1.7.7",
