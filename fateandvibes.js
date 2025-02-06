@@ -10,7 +10,7 @@ const bot = new Telegraf(token);
 
 // Welcoming message when the bot is started
 bot.start((ctx) => {
-  ctx.reply('Welcome to the Unified Ascendants bot! Use /help to see the available commands.');
+  ctx.reply('Welcome to the Fate and Vibes bot! Use /help to see the available commands.');
 });
 
 // Handle incoming messages
@@ -25,7 +25,7 @@ bot.on('text', (ctx) => {
 // Welcoming new chat members
 bot.on('new_chat_members', (ctx) => {
   ctx.message.new_chat_members.forEach((member) => {
-    ctx.reply(`Welcome ${member.first_name}! Enjoy in Unified Ascendants.`);
+    ctx.reply(`Welcome ${member.first_name}! Enjoy in Fate and Vibes.`);
   });
 });
 
@@ -36,13 +36,13 @@ bot.on('left_chat_member', (ctx) => {
 
 // Log that the bot is running
 bot.launch();
-console.log('Astral Bot is running...');
+console.log('Fate and Vibes Bot is running...');
 
 // Simple HTTP server to keep the bot running and let the platform detect an open port
 const PORT = process.env.PORT || 3000;
 http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' });
-  res.end('Astral Bot is running!\n');
+  res.end('Fate and Vibes Bot is running!\n');
 }).listen(PORT, () => {
   console.log(`Server is listening on port ${PORT}`);
 });
