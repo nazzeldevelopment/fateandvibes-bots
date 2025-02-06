@@ -4,6 +4,6 @@ export const logBotInfo = () => {
     console.log("Bot Version: 1.0.0"); // Palitan ayon sa iyong bersyon
     console.log("Developed By: Nazzel Official");
     console.log("All Rights Reserved:");
-    console.log("Astral Telegram Bots 2024");
+    console.log("Fate and Vibes 2024");
     console.log("__________________");
 };
