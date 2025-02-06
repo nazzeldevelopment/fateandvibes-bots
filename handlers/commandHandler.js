@@ -116,7 +116,7 @@ export const handleCommand = async (msg, ctx) => {
   // Maintenance mode check
   const isAdmin = userId === parseInt(process.env.ADMIN_ID); // Check if the user is admin
   if (process.env.MAINTENANCE_MODE === 'true' && !isAdmin) {
-    ctx.reply('Astral Bot is currently in maintenance mode. Please try again later.');
+    ctx.reply('Fate and Vibes Bot is currently in maintenance mode. Please try again later.');
     return;
   }
 
