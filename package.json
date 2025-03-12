@@ -1,10 +1,10 @@
 {
-  "name": "unified-ascendants-bots",
+  "name": "fate-and-vibes-bots",
   "version": "1.0.0",
   "type": "module",
-  "main": "unified.js",
+  "main": "fateandvibes.js",
   "scripts": {
-    "start": "node unified.js"
+    "start": "node fateandvibes.js"
   },
   "dependencies": {
     "axios": "^1.7.7",
